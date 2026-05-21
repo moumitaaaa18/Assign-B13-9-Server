@@ -51,6 +51,10 @@ async function run() {
       const result = await carsCollection.find().toArray();
       res.send(result);
     });
+    app.get("/my-cars", async (req, res) => {
+  const result = await carsCollection.find({ isMyAdded: true }).toArray();
+  res.send(result);
+});
 
     app.get("/cars/:id", async (req, res) => {
       const id = req.params.id;
