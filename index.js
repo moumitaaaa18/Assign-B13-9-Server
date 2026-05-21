@@ -31,6 +31,7 @@ async function run() {
     const database = client.db("driveFleetDB");
     const usersCollection = database.collection("users");
     const carsCollection = database.collection("cars");
+    const bookingsCollection = database.collection("bookings");
 
     app.get("/", (req, res) => {
       res.send("DriveFleet Server Running");
@@ -112,6 +113,23 @@ app.get("/seed-cars", async (req, res) => {
       isMyAdded: false,
     },
   ];
+  app.get("/bookings", async (req, res) => {
+  const result = await bookingsCollection.find().toArray();
+  res.send(result);
+});
+
+app.post("/bookings", async (req, res) => {
+  const booking = req.body;
+
+  const result = await bookingsCollection.insertOne(booking);
+
+  await carsCollection.updateOne(
+    { _id: new ObjectId(booking.carId) },
+    { $inc: { booking_count: 1 } }
+  );
+
+  res.send(result);
+});
 
   const result = await carsCollection.insertMany(cars);
   res.send(result);
