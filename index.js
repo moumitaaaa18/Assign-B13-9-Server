@@ -52,92 +52,97 @@ async function run() {
       const result = await carsCollection.find().toArray();
       res.send(result);
     });
+
     app.get("/my-cars", async (req, res) => {
-  const result = await carsCollection.find({ isMyAdded: true }).toArray();
-  res.send(result);
-});
-app.get("/seed-cars", async (req, res) => {
-  const cars = [
-    {
-      carModel: "Toyota Corolla",
-      carType: "Sedan",
-      dailyRentalPrice: 5000,
-      location: "Dhaka",
-      availability: "Available",
-      booking_count: 0,
-      isMyAdded: false,
-    },
-    {
-      carModel: "Honda Civic",
-      carType: "Sedan",
-      dailyRentalPrice: 4000,
-      location: "Sylhet",
-      availability: "Available",
-      booking_count: 0,
-      isMyAdded: false,
-    },
-    {
-      carModel: "Suzuki Swift",
-      carType: "Hatchback",
-      dailyRentalPrice: 3000,
-      location: "Khulna",
-      availability: "Available",
-      booking_count: 0,
-      isMyAdded: false,
-    },
-    {
-      carModel: "Mercedes C-Class",
-      carType: "Luxury",
-      dailyRentalPrice: 18000,
-      location: "Dhaka",
-      availability: "Available",
-      booking_count: 0,
-      isMyAdded: false,
-    },
-    {
-      carModel: "Nissan X-Trail",
-      carType: "SUV",
-      dailyRentalPrice: 6500,
-      location: "Barishal",
-      availability: "Unavailable",
-      booking_count: 0,
-      isMyAdded: false,
-    },
-    {
-      carModel: "Mazda CX-5",
-      carType: "SUV",
-      dailyRentalPrice: 7200,
-      location: "Dhaka",
-      availability: "Available",
-      booking_count: 0,
-      isMyAdded: false,
-    },
-  ];
-  app.get("/bookings", async (req, res) => {
-  const result = await bookingsCollection.find().toArray();
-  res.send(result);
-});
+      const result = await carsCollection.find({ isMyAdded: true }).toArray();
+      res.send(result);
+    });
 
-app.post("/bookings", async (req, res) => {
-  const booking = req.body;
+    app.get("/seed-cars", async (req, res) => {
+      const cars = [
+        {
+          carModel: "Toyota Corolla",
+          carType: "Sedan",
+          dailyRentalPrice: 5000,
+          location: "Dhaka",
+          availability: "Available",
+          booking_count: 0,
+          isMyAdded: false,
+        },
+        {
+          carModel: "Honda Civic",
+          carType: "Sedan",
+          dailyRentalPrice: 4000,
+          location: "Sylhet",
+          availability: "Available",
+          booking_count: 0,
+          isMyAdded: false,
+        },
+        {
+          carModel: "Suzuki Swift",
+          carType: "Hatchback",
+          dailyRentalPrice: 3000,
+          location: "Khulna",
+          availability: "Available",
+          booking_count: 0,
+          isMyAdded: false,
+        },
+        {
+          carModel: "Mercedes C-Class",
+          carType: "Luxury",
+          dailyRentalPrice: 18000,
+          location: "Dhaka",
+          availability: "Available",
+          booking_count: 0,
+          isMyAdded: false,
+        },
+        {
+          carModel: "Nissan X-Trail",
+          carType: "SUV",
+          dailyRentalPrice: 6500,
+          location: "Barishal",
+          availability: "Unavailable",
+          booking_count: 0,
+          isMyAdded: false,
+        },
+        {
+          carModel: "Mazda CX-5",
+          carType: "SUV",
+          dailyRentalPrice: 7200,
+          location: "Dhaka",
+          availability: "Available",
+          booking_count: 0,
+          isMyAdded: false,
+        },
+      ];
 
-  const result = await bookingsCollection.insertOne(booking);
+      const result = await carsCollection.insertMany(cars);
+      res.send(result);
+    });
 
-  await carsCollection.updateOne(
-    { _id: new ObjectId(booking.carId) },
-    { $inc: { booking_count: 1 } }
-  );
+    app.get("/bookings", async (req, res) => {
+      const result = await bookingsCollection.find().toArray();
+      res.send(result);
+    });
 
-  res.send(result);
-});
+    app.post("/bookings", async (req, res) => {
+      const booking = req.body;
 
-  const result = await carsCollection.insertMany(cars);
-  res.send(result);
-});
+      const result = await bookingsCollection.insertOne(booking);
+
+      await carsCollection.updateOne(
+        { _id: new ObjectId(booking.carId) },
+        { $inc: { booking_count: 1 } }
+      );
+
+      res.send(result);
+    });
 
     app.get("/cars/:id", async (req, res) => {
       const id = req.params.id;
-      const result = await carsCollection.findOne({ _id: new ObjectId(id) });
+      const result = await carsCollection.findOne({
+        _id: new ObjectId(id),
+      });
       res.send(result);
     });
 
