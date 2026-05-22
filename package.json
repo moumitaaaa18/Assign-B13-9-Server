@@ -10,9 +10,11 @@
   "dependencies": {
     "@better-auth/mongo-adapter": "^1.0.0",
     "better-auth": "^1.0.0",
+    "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
+    "jsonwebtoken": "^9.0.3",
     "mongodb": "^6.5.0"
   },
   "devDependencies": {
