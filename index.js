@@ -100,6 +100,19 @@ async function run() {
 
       res.send(result);
     });
+    app.delete("/bookings", async (req, res) => {
+  await bookingsCollection.deleteMany({});
+
+  await carsCollection.updateMany(
+    {},
+    { $set: { booking_count: 0 } }
+  );
+
+  res.send({
+    success: true,
+    message: "All bookings cleared",
+  });
+});
 
     app.get("/reset-database", async (req, res) => {
       await carsCollection.deleteMany({});
