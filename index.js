@@ -27,7 +27,20 @@ async function run() {
     });
 
     app.get("/cars", async (req, res) => {
-      const result = await carsCollection.find().toArray();
+      const search = req.query.search || "";
+      const type = req.query.type || "";
+
+      const query = {};
+
+      if (search) {
+        query.carModel = { $regex: search, $options: "i" };
+      }
+
+      if (type && type !== "All Types") {
+        query.carType = type;
+      }
+
+      const result = await carsCollection.find(query).toArray();
       res.send(result);
     });
 
