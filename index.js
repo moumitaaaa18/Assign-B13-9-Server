@@ -66,11 +66,7 @@ async function run() {
 
     app.delete("/cars/:id", async (req, res) => {
       const id = req.params.id;
-
-      const result = await carsCollection.deleteOne({
-        _id: new ObjectId(id),
-      });
-
+      const result = await carsCollection.deleteOne({ _id: new ObjectId(id) });
       res.send(result);
     });
 
@@ -90,6 +86,75 @@ async function run() {
       );
 
       res.send(result);
+    });
+
+    app.get("/reset-database", async (req, res) => {
+      await carsCollection.deleteMany({});
+      await bookingsCollection.deleteMany({});
+
+      const defaultCars = [
+        {
+          carModel: "Toyota Corolla",
+          carType: "Sedan",
+          dailyRentalPrice: 5000,
+          location: "Dhaka",
+          availability: "Available",
+          booking_count: 0,
+          isMyAdded: false,
+        },
+        {
+          carModel: "Honda Civic",
+          carType: "Sedan",
+          dailyRentalPrice: 4000,
+          location: "Sylhet",
+          availability: "Available",
+          booking_count: 0,
+          isMyAdded: false,
+        },
+        {
+          carModel: "Suzuki Swift",
+          carType: "Hatchback",
+          dailyRentalPrice: 3000,
+          location: "Khulna",
+          availability: "Available",
+          booking_count: 0,
+          isMyAdded: false,
+        },
+        {
+          carModel: "Mercedes C-Class",
+          carType: "Luxury",
+          dailyRentalPrice: 18000,
+          location: "Dhaka",
+          availability: "Available",
+          booking_count: 0,
+          isMyAdded: false,
+        },
+        {
+          carModel: "Nissan X-Trail",
+          carType: "SUV",
+          dailyRentalPrice: 6500,
+          location: "Barishal",
+          availability: "Unavailable",
+          booking_count: 0,
+          isMyAdded: false,
+        },
+        {
+          carModel: "Mazda CX-5",
+          carType: "SUV",
+          dailyRentalPrice: 7200,
+          location: "Dhaka",
+          availability: "Available",
+          booking_count: 0,
+          isMyAdded: false,
+        },
+      ];
+
+      const result = await carsCollection.insertMany(defaultCars);
+
+      res.send({
+        message: "Database reset successfully",
+        insertedCars: result.insertedCount,
+      });
     });
   } catch (error) {
     console.log("Server Error:", error.message);
