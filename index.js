@@ -11,7 +11,11 @@ const app = express();
 const port = process.env.PORT || 5000;
 app.use(
   cors({
-    origin: true,
+    origin: [
+      "http://localhost:5175",
+      "https://assign-b13-9-client.vercel.app",
+      "https://assign-b13-9-client-53twwazhv-moumitaaaa18s-projects.vercel.app"
+    ],
     credentials: true,
   })
 );
