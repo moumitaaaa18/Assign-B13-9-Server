@@ -11,27 +11,12 @@ const app = express();
 const port = process.env.PORT || 5000;
 
 // CORS setup
-const allowedOrigins = [
-  "http://localhost:5173",
-  "http://localhost:5175",
-  "http://localhost:5177",
-  "https://assign-b13-9-client.vercel.app",
-  "https://assign-b13-9-client-53twwazhv-moumitaaaa18s-projects.vercel.app",
-];
-
 app.use(
   cors({
-    origin: function (origin, callback) {
-      if (!origin || allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        callback(new Error("Not allowed by CORS"));
-      }
-    },
+    origin: true,
     credentials: true,
   })
 );
-
 app.use(express.json());
 app.use(cookieParser());
 
