@@ -9,18 +9,28 @@ dotenv.config();
 
 const app = express();
 const port = process.env.PORT || 5000;
+
+// CORS setup
+const allowedOrigins = [
+  "http://localhost:5173",
+  "http://localhost:5175",
+  "http://localhost:5177",
+  "https://assign-b13-9-client.vercel.app",
+  "https://assign-b13-9-client-53twwazhv-moumitaaaa18s-projects.vercel.app",
+];
+
 app.use(
   cors({
-    origin: [
-      "http://localhost:5175",
-      "https://assign-b13-9-client.vercel.app",
-      "https://assign-b13-9-client-53twwazhv-moumitaaaa18s-projects.vercel.app"
-    ],
+    origin: function (origin, callback) {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
     credentials: true,
   })
 );
-
-
 
 app.use(express.json());
 app.use(cookieParser());
@@ -51,7 +61,6 @@ const verifyToken = (req, res, next) => {
     next();
   });
 };
-
 
 async function run() {
   try {
@@ -195,12 +204,23 @@ async function run() {
 
     app.get("/cars/:id", async (req, res) => {
       const id = req.params.id;
+
+      if (!ObjectId.isValid(id)) {
+        return res.status(400).send({ message: "Invalid car id" });
+      }
+
       const result = await carsCollection.findOne({ _id: new ObjectId(id) });
+
+      if (!result) {
+        return res.status(404).send({ message: "Car not found" });
+      }
+
       res.send(result);
     });
 
     app.post("/cars", verifyToken, async (req, res) => {
       const car = req.body;
+
       car.isMyAdded = true;
       car.booking_count = 0;
 
@@ -226,6 +246,10 @@ async function run() {
       const id = req.params.id;
       const updatedCar = req.body;
 
+      if (!ObjectId.isValid(id)) {
+        return res.status(400).send({ message: "Invalid car id" });
+      }
+
       const result = await carsCollection.updateOne(
         { _id: new ObjectId(id) },
         { $set: updatedCar }
@@ -236,6 +260,11 @@ async function run() {
 
     app.delete("/cars/:id", verifyToken, async (req, res) => {
       const id = req.params.id;
+
+      if (!ObjectId.isValid(id)) {
+        return res.status(400).send({ message: "Invalid car id" });
+      }
+
       const result = await carsCollection.deleteOne({
         _id: new ObjectId(id),
       });
@@ -248,10 +277,12 @@ async function run() {
 
       const result = await bookingsCollection.insertOne(booking);
 
-      await carsCollection.updateOne(
-        { _id: new ObjectId(booking.carId) },
-        { $inc: { booking_count: 1 } }
-      );
+      if (booking.carId && ObjectId.isValid(booking.carId)) {
+        await carsCollection.updateOne(
+          { _id: new ObjectId(booking.carId) },
+          { $inc: { booking_count: 1 } }
+        );
+      }
 
       res.send(result);
     });
