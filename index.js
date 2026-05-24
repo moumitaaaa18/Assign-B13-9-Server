@@ -9,19 +9,14 @@ dotenv.config();
 
 const app = express();
 const port = process.env.PORT || 5000;
-
 app.use(
   cors({
-    origin: [
-      "http://localhost:5174",
-      "http://localhost:5175",
-      "https://assign-b13-9-client.vercel.app",
-      "https://assign-b13-9-client-8y6qsm5qa-moumitaaaa18s-projects.vercel.app",
-      "https://assign-b13-9-client-e730czfco-moumitaaaa18s-projects.vercel.app",
-    ],
+    origin: true,
     credentials: true,
   })
 );
+
+
 
 app.use(express.json());
 app.use(cookieParser());
@@ -52,6 +47,7 @@ const verifyToken = (req, res, next) => {
     next();
   });
 };
+
 
 async function run() {
   try {
